@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, hiwepy (https://github.com/easy-4-java).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ public class CxfClientUtils {
 	/**
 	 * 
 	 * @description	： 动态调用webService接口
-	 * @author 		： <a href="https://github.com/hiwepy">hiwepy</a>
+	 * @author 		： <a href="https://github.com/easy-4-java">hiwepy</a>
 	 * @date 		：2017年11月13日 下午5:20:28
 	 * @param wsdlUrl 地址(带 ?wsdl)
 	 * @param optName 调用的操作名称(一般为方法名称)
