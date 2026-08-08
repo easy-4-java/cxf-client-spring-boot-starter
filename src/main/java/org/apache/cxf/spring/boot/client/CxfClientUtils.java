@@ -25,7 +25,7 @@ public class CxfClientUtils {
 	/**
 	 * 
 	 * @description	： 动态调用webService接口
-	 * @author 		： <a href="https://github.com/hiwepy">hiwepy</a>
+	 * @author [@Loong Wan](https://github.com/loong10k)
 	 * @date 		：2017年11月13日 下午5:20:28
 	 * @param wsdlUrl 地址(带 ?wsdl)
 	 * @param optName 调用的操作名称(一般为方法名称)
