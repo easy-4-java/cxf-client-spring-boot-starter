@@ -15,46 +15,77 @@
  */
 package org.apache.cxf.spring.boot.client;
 
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public class CxfClientUtils_Test {
-	
-	@Test
-	public void testname1() throws Exception {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
-        //sayHello 为接口中定义的方法名称   张三为传递的参数   返回一个Object数组
-	    Object[] objects = CxfClientUtils.invoke("http://127.0.0.1:9000/hello?wsdl", "sayHello", "张三");   
-	    //输出调用结果
-	    System.out.println(objects[0].toString()); 
-	    
-	}
-	
-	@Test
-	public void testname2() throws Exception {
+/**
+ * Tests for {@link CxfClientUtils}.
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ */
+@DisplayName("CxfClientUtils")
+class CxfClientUtils_Test {
 
-		
-		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-	    org.apache.cxf.endpoint.Client client = dcf.createClient("http://127.0.0.1:9000/hello?wsdl");
-        //sayHello 为接口中定义的方法名称   张三为传递的参数   返回一个Object数组
-	    Object[] objects= client.invoke("sayHello", "张三");   
-	    //输出调用结果
-	    System.out.println(objects[0].toString()); 
-	    
-	}
-	
-	@Test
-	public void testname3() throws Exception {
+    /**
+     * Testable subclass that overrides createClient to return a mock.
+     */
+    private static class TestableClientFactory extends JaxWsDynamicClientFactory {
+        private final Client mockClient;
 
-	    
-	    /*
-	    JaxWsProxyFactoryBean  factoryBean=new JaxWsProxyFactoryBean();
-        factoryBean.getInInterceptors().add(new LoggingInInterceptor());
-        factoryBean.getOutInterceptors().add(new LoggingOutInterceptor());
-        factoryBean.setServiceClass(IHelloWorldService.class);
-        factoryBean.setAddress("http://localhost:9000/hello");
-        IHelloWorldService impl=(IHelloWorldService) factoryBean.create();
-        System.out.println(impl.sayHello("张三")); */
-	}
+        TestableClientFactory(Client mockClient) {
+            super(null);
+            this.mockClient = mockClient;
+        }
 
+        @Override
+        public Client createClient(String wsdlUrl) {
+            return mockClient;
+        }
+    }
+
+    @Test
+    @DisplayName("invoke calls client.invoke and returns result")
+    void invoke_callsClientInvoke() throws Exception {
+        Client mockClient = mock(Client.class);
+        Object[] expectedResult = new Object[]{"hello", "world"};
+        when(mockClient.invoke("sayHello", "param1")).thenReturn(expectedResult);
+
+        JaxWsDynamicClientFactory originalDcf = CxfClientUtils.dcf;
+        try {
+            CxfClientUtils.dcf = new TestableClientFactory(mockClient);
+
+            Object[] result = CxfClientUtils.invoke("http://example.com?wsdl", "sayHello", "param1");
+
+            assertThat(result).isEqualTo(expectedResult);
+            verify(mockClient).invoke("sayHello", "param1");
+        } finally {
+            CxfClientUtils.dcf = originalDcf;
+        }
+    }
+
+    @Test
+    @DisplayName("invoke propagates exception from client creation")
+    void invoke_propagatesException() throws Exception {
+        JaxWsDynamicClientFactory originalDcf = CxfClientUtils.dcf;
+        try {
+            CxfClientUtils.dcf = new JaxWsDynamicClientFactory(null) {
+                @Override
+                public Client createClient(String wsdlUrl) {
+                    throw new RuntimeException("connection failed");
+                }
+            };
+
+            assertThatThrownBy(() ->
+                CxfClientUtils.invoke("http://bad-url?wsdl", "method")
+            ).isInstanceOf(Exception.class);
+        } finally {
+            CxfClientUtils.dcf = originalDcf;
+        }
+    }
 }

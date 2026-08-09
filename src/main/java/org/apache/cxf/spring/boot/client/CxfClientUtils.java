@@ -20,7 +20,11 @@ import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 public class CxfClientUtils {
 
-	private static JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+	private CxfClientUtils() {
+		// utility class
+	}
+
+	static JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 	
 	/**
 	 * 

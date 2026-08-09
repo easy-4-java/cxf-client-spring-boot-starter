@@ -169,9 +169,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        
+
                         <forkMode>once</forkMode>
-                        <argLine>${argLine} -Xmx1024m -Dfile.encoding=UTF-8</argLine>
+                        <argLine>${argLine} -Xmx1024m -Dfile.encoding=UTF-8 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
                         </additionalClasspathElements>
@@ -590,7 +590,18 @@
             <version>${commons-io.version}</version>
             <scope>test</scope>
         </dependency>
-            <!-- For JUnit -->
+            <!-- For JAXB API (removed from JDK 11+) -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.9</version>
+        </dependency>
+        <!-- For JUnit -->
             <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
