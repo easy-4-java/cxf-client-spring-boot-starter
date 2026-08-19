@@ -18,6 +18,11 @@ package org.apache.cxf.spring.boot.client;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
+/**
+ * <p>Auto-configuration for CxfClientUtils.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CxfClientUtils {
 
 	private CxfClientUtils() {
